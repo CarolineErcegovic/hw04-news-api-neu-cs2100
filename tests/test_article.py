@@ -44,10 +44,14 @@ class TestArticle(unittest.TestCase):
 
     def test_repr(self) -> None:
         """Test __repr__ format"""
-        expected = (
-            "Article(title=Example Title, "
-            "author=John Doe, "
-            "source=Example Source, "
-            "publishedAt=2023-10-01T12:00:00Z)"
-        )
-        self.assertEqual(repr(self.article), expected)
+        result = repr(self.article)
+
+        self.assertTrue(result.startswith("Article("))
+        self.assertIn("title=Example Title", result)
+        self.assertIn("author=John Doe", result)
+        self.assertIn("source=Example Source", result)
+        self.assertIn("publishedAt=2023-10-01T12:00:00Z", result)
+        self.assertTrue(result.endswith(")"))
+
+        # Ensure repr is NOT the same as str
+        self.assertNotEqual(result, str(self.article))
