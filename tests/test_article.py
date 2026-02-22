@@ -43,19 +43,15 @@ class TestArticle(unittest.TestCase):
         self.assertEqual(str(self.article), expected)
 
     def test_repr(self) -> None:
-        """Test __repr__ format"""
-        result = repr(self.article)
+        """Test exact __repr__ format"""
+        expected = (
+            "Article(title=Example Title, "
+            "author=John Doe, "
+            "source=Example Source, "
+            "publishedAt=2023-10-01T12:00:00Z)"
+        )
+        self.assertEqual(repr(self.article), expected)
 
-        self.assertTrue(result.startswith("Article("))
-        self.assertIn("title=Example Title", result)
-        self.assertIn("author=John Doe", result)
-        self.assertIn("source=Example Source", result)
-        self.assertIn("publishedAt=2023-10-01T12:00:00Z", result)
-        self.assertTrue(result.endswith(")"))
-
-        # Ensure repr is NOT the same as str
-        self.assertNotEqual(result, str(self.article))
-    
     def test_multiple_articles_independent(self) -> None:
         """Ensure multiple Article instances store independent values"""
         article2 = Article(
