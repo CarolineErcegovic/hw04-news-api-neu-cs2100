@@ -35,7 +35,7 @@ class TestArticle(unittest.TestCase):
     def test_url_is_read_only(self) -> None:
         """Test that url property is read-only"""
         with self.assertRaises(AttributeError):
-            self.article.url = "new_url"  
+            self.article.url = "new_url"  #type: ignore
 
     def test_str(self) -> None:
         """Test __str__ format"""

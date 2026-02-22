@@ -68,3 +68,16 @@ class TestNewsProcessor(unittest.TestCase):
 
         authors = list(df["author"])
         self.assertEqual(authors, sorted(authors))
+    
+    def test_sort_and_filter(self) -> None:
+        """Test sorting and filtering together"""
+        df = self.processor.to_df(
+            self.articles,
+            sort_by=lambda article: article.author,
+            filter_func=lambda article: "Python" in article.title
+        )
+
+        self.assertEqual(len(df), 2)
+
+        authors = list(df["author"])
+        self.assertEqual(authors, sorted(authors))

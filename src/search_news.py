@@ -2,7 +2,7 @@
 Module to interact with the News API and retrieve news articles.
 """
 
-from typing import Optional, Any
+from typing import Optional, Any, cast
 import requests
 from src.article import Article
 
@@ -112,7 +112,7 @@ class SearchNews:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
 
-        return response.json()
+        return cast(dict[str, Any], response.json())
         
 
     def _create_articles_from_response(self, response_data: dict[str, Any]) -> list[Article]:
