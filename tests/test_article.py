@@ -7,9 +7,6 @@ import sys
 sys.path.append(".")
 from src.article import Article
 
-# You may use # type: ignore to ignore the mypy error when accessing a 
-# read-only property (which should raise an AttributeError).
-
 class TestArticle(unittest.TestCase):
     """Tests for the Article class"""
 
@@ -38,7 +35,7 @@ class TestArticle(unittest.TestCase):
     def test_url_is_read_only(self) -> None:
         """Test that url property is read-only"""
         with self.assertRaises(AttributeError):
-            self.article.url = "new_url"  # type: ignore
+            self.article.url = "new_url"  
 
     def test_str(self) -> None:
         """Test __str__ format"""
@@ -48,9 +45,9 @@ class TestArticle(unittest.TestCase):
     def test_repr(self) -> None:
         """Test __repr__ format"""
         expected = (
-            "Article(title='Example Title', "
-            "author='John Doe', "
-            "source='Example Source', "
-            "publishedAt='2023-10-01T12:00:00Z')"
+            "Article(title=Example Title, "
+            "author=John Doe, "
+            "source=Example Source, "
+            "publishedAt=2023-10-01T12:00:00Z)"
         )
         self.assertEqual(repr(self.article), expected)

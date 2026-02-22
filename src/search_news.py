@@ -12,17 +12,17 @@ class SearchNews:
     Class to interact with the News API and retrieve news articles.
     """
 
-    def __init__(self, __api_key:str)-> None:
+    def __init__(self, api_key_file: str) -> None:
         """
         Initialize SearchNews by reading API key from file.
 
         Args:
             api_key_file (str): Path to file containing the API key
-        
+
         Raises:
             FileNotFoundError: If the API key file does not exist
         """
-        with open("key.txt", "r") as file:
+        with open(api_key_file, "r", encoding="utf-8") as file:
             self.__api_key: str = file.read().strip()
 
     def get_top_headlines(self, *terms: str) -> list[Article]:
@@ -39,10 +39,7 @@ class SearchNews:
             requests.exceptions.RequestException: If the API request fails
             KeyError: If expected keys are missing in the API response data
         """
-        # TODO: Implement API call to /top-headlines endpoint
-        # Base URL: https://newsapi.org/v2/top-headlines
-        # Remember to include your API key in the request parameters
-        # Parse JSON response and create Article objects
+        
         query = " ".join(terms)
 
         params: dict[str, str] = {
@@ -76,10 +73,6 @@ class SearchNews:
             requests.exceptions.RequestException: If the API request fails
             KeyError: If expected keys are missing in the API response data
         """
-        # TODO: Implement API call to /everything endpoint
-        # Base URL: https://newsapi.org/v2/everything
-        # Remember to include your API key in the request parameters
-        # Parse JSON response and create Article objects
         query = " ".join(terms)
 
         params: dict[str, str] = {
@@ -99,7 +92,7 @@ class SearchNews:
         response_data = self._make_request("everything", params)
         return self._create_articles_from_response(response_data)
 
-    def _make_request(self, endpoint: str, params: dict[str, str]) -> Any:
+    def _make_request(self, endpoint: str, params: dict[str, str]) -> dict[str, Any]:
         """
         Helper method to make API requests.
 
@@ -109,16 +102,14 @@ class SearchNews:
 
         Returns:
             dict[str, Any]: Dictionary of JSON response
-        
+
         Raises:
             requests.exceptions.RequestException: If the API request fails
         """
-        # TODO: Implement helper method for making API requests
-        # This can reduce code duplication between get_top_headlines and get_everything
         base_url = "https://newsapi.org/v2/"
         url = base_url + endpoint
 
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
 
         return response.json()
@@ -137,7 +128,6 @@ class SearchNews:
         Raises:
             KeyError: If expected keys are missing in the response data
         """
-        # TODO: Parse the 'articles' field from response and create Article objects
         articles: list[Article] = []
 
         for item in response_data["articles"]:

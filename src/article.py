@@ -82,11 +82,13 @@ class Article:
         return f"{self.__title} by {self.__author} from {self.__source} on {self.__published_at}"
 
     def __repr__(self) -> str:
-        """Return a string representation of the article of the format
-        "Article(title='...', author='...', source='...', publishedAt='...')" """
+        """
+        Return a string representation of the Article in the format:
+        Article(title=..., author=..., source=..., publishedAt=...)
+        """
         return (
-            f"Article(title='{self.__title}', "
-            f"author='{self.__author}', "
-            f"source='{self.__source}', "
-            f"publishedAt='{self.__published_at}')"
+            f"Article(title={self.__title}, "
+            f"author={self.__author}, "
+            f"source={self.__source}, "
+            f"publishedAt={self.__published_at})"
         )

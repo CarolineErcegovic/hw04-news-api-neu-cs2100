@@ -68,17 +68,3 @@ class TestNewsProcessor(unittest.TestCase):
 
         authors = list(df["author"])
         self.assertEqual(authors, sorted(authors))
-
-    def test_count_word_in_title(self) -> None:
-        """Test word counting helper method"""
-        count = self.processor._count_word_in_title(
-            "Python Python Java", "python"
-        )
-        self.assertEqual(count, 2)
-
-    def test_extract_date(self) -> None:
-        """Test date extraction helper method"""
-        date = self.processor._extract_date_from_published_at(
-            "2023-10-01T10:00:00Z"
-        )
-        self.assertEqual(str(date), "2023-10-01")

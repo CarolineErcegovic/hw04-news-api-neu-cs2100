@@ -78,8 +78,10 @@ class NewsProcessor:
         sorted_dates = sorted(frequency_by_date.keys())
         counts = [frequency_by_date[d] for d in sorted_dates]
 
+        date_strings: list[str] = [d.isoformat() for d in sorted_dates]
+
         plt.figure()
-        plt.plot(sorted_dates, counts)
+        plt.plot(date_strings, counts)
 
         plt.xlabel("Date")
         plt.ylabel("Frequency")
