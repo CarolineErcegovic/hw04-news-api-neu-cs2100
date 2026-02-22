@@ -122,3 +122,17 @@ class NewsProcessor:
             return 0
 
         return title.lower().count(search_term.lower())
+    
+    def test_dataframe_values_match_article(self) -> None:
+        """Ensure DataFrame values match Article attributes"""
+        df = self.processor.to_df(self.articles)
+
+        first_row = df.iloc[0]
+
+        self.assertEqual(first_row["url"], self.articles[0].url)
+        self.assertEqual(first_row["source"], self.articles[0].source)
+        self.assertEqual(first_row["author"], self.articles[0].author)
+        self.assertEqual(first_row["title"], self.articles[0].title)
+        self.assertEqual(first_row["description"], self.articles[0].description)
+        self.assertEqual(first_row["published_at"], self.articles[0].published_at)
+        self.assertEqual(first_row["content"], self.articles[0].content)
