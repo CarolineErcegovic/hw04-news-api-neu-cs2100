@@ -55,3 +55,23 @@ class TestArticle(unittest.TestCase):
 
         # Ensure repr is NOT the same as str
         self.assertNotEqual(result, str(self.article))
+    
+    def test_multiple_articles_independent(self) -> None:
+        """Ensure multiple Article instances store independent values"""
+        article2 = Article(
+            url="https://another.com",
+            source="Different Source",
+            author="Jane Smith",
+            title="Different Title",
+            description="Different description.",
+            published_at="2024-01-01T00:00:00Z",
+            content="Different content."
+        )
+
+        self.assertEqual(article2.url, "https://another.com")
+        self.assertEqual(article2.source, "Different Source")
+        self.assertEqual(article2.author, "Jane Smith")
+        self.assertEqual(article2.title, "Different Title")
+        self.assertEqual(article2.description, "Different description.")
+        self.assertEqual(article2.published_at, "2024-01-01T00:00:00Z")
+        self.assertEqual(article2.content, "Different content.")
