@@ -12,7 +12,7 @@ class SearchNews:
     Class to interact with the News API and retrieve news articles.
     """
 
-    def __init__(self, api_key_file: str):
+    def __init__(self, __api_key:str)-> None:
         """
         Initialize SearchNews by reading API key from file.
 
@@ -22,7 +22,8 @@ class SearchNews:
         Raises:
             FileNotFoundError: If the API key file does not exist
         """
-        pass
+        with open("key.txt", "r") as file:
+            self.__api_key: str = file.read().strip()
 
     def get_top_headlines(self, *terms: str) -> list[Article]:
         """
@@ -42,7 +43,15 @@ class SearchNews:
         # Base URL: https://newsapi.org/v2/top-headlines
         # Remember to include your API key in the request parameters
         # Parse JSON response and create Article objects
-        pass
+        query = " ".join(terms)
+
+        params: dict[str, str] = {
+            "q": query,
+            "apiKey": self.__api_key
+        }
+
+        response_data = self._make_request("top-headlines", params)
+        return self._create_articles_from_response(response_data)
 
     def get_everything(
         self,
@@ -71,7 +80,24 @@ class SearchNews:
         # Base URL: https://newsapi.org/v2/everything
         # Remember to include your API key in the request parameters
         # Parse JSON response and create Article objects
-        pass
+        query = " ".join(terms)
+
+        params: dict[str, str] = {
+            "q": query,
+            "apiKey": self.__api_key
+        }
+
+        if date is not None:
+            params["from"] = date
+
+        if domains is not None:
+            params["domains"] = ",".join(domains)
+
+        if language is not None:
+            params["language"] = language
+
+        response_data = self._make_request("everything", params)
+        return self._create_articles_from_response(response_data)
 
     def _make_request(self, endpoint: str, params: dict[str, str]) -> Any:
         """
@@ -89,7 +115,13 @@ class SearchNews:
         """
         # TODO: Implement helper method for making API requests
         # This can reduce code duplication between get_top_headlines and get_everything
-        pass
+        base_url = "https://newsapi.org/v2/"
+        url = base_url + endpoint
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+        return response.json()
         
 
     def _create_articles_from_response(self, response_data: dict[str, Any]) -> list[Article]:
@@ -106,4 +138,18 @@ class SearchNews:
             KeyError: If expected keys are missing in the response data
         """
         # TODO: Parse the 'articles' field from response and create Article objects
-        pass
+        articles: list[Article] = []
+
+        for item in response_data["articles"]:
+            article = Article(
+                url=item["url"],
+                source=item["source"]["name"],
+                author=item["author"],
+                title=item["title"],
+                description=item["description"],
+                published_at=item["publishedAt"],
+                content=item["content"]
+            )
+            articles.append(article)
+
+        return articles

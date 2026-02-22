@@ -50,3 +50,35 @@ class TestNewsProcessor(unittest.TestCase):
         self.assertListEqual(
             list(df.columns), 
             ['url', 'source', 'author', 'title', 'description', 'published_at', 'content'])
+
+    def test_filter(self) -> None:
+        """Test filtering functionality"""
+        df = self.processor.to_df(
+            self.articles,
+            filter_func=lambda article: "Python" in article.title
+        )
+        self.assertEqual(len(df), 2)
+
+    def test_sort(self) -> None:
+        """Test sorting functionality"""
+        df = self.processor.to_df(
+            self.articles,
+            sort_by=lambda article: article.author
+        )
+
+        authors = list(df["author"])
+        self.assertEqual(authors, sorted(authors))
+
+    def test_count_word_in_title(self) -> None:
+        """Test word counting helper method"""
+        count = self.processor._count_word_in_title(
+            "Python Python Java", "python"
+        )
+        self.assertEqual(count, 2)
+
+    def test_extract_date(self) -> None:
+        """Test date extraction helper method"""
+        date = self.processor._extract_date_from_published_at(
+            "2023-10-01T10:00:00Z"
+        )
+        self.assertEqual(str(date), "2023-10-01")

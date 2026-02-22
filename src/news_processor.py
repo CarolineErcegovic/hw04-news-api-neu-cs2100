@@ -30,14 +30,26 @@ class NewsProcessor:
         Returns:
             pd.DataFrame: Pandas DataFrame with articles data
         """
-        # TODO: Convert Article objects to DataFrame
-        # Each Article attribute should be a column
-        # Each article should be a row
 
-        # TODO: Apply filtering if filter_func is provided
+        if filter_func is not None:
+            articles = [a for a in articles if filter_func(a)]
 
-        # TODO: Apply sorting if sort_by is provided
-        pass
+        if sort_by is not None:
+            articles = sorted(articles, key=sort_by)
+
+        data = []
+        for article in articles:
+            data.append({
+                "url": article.url,
+                "source": article.source,
+                "author": article.author,
+                "title": article.title,
+                "description": article.description,
+                "published_at": article.published_at,
+                "content": article.content
+            })
+
+        return pd.DataFrame(data)
 
     def plot_word_popularity(self, articles: list[Article], search_term: str) -> None:
         """
@@ -47,18 +59,34 @@ class NewsProcessor:
             articles (list[Article]): List of Article objects
             search_term (str): The term to search for in titles
         """
-        # TODO:
-        # 1. Extract dates and titles from articles
-        # 2. Count occurrences of search_term in titles for each date
-        # 3. Create a plot with dates on x-axis and frequency on y-axis
-        # 4. Display the plot
 
-        # Hints:
-        # - You may need to parse the published_at dates
-        # - Consider using case-insensitive search
-        # - matplotlib.pyplot can be used for plotting
-        # - Please create protected helper methods for any complex logic
-        pass
+        frequency_by_date: dict[datetime.date, int] = {}
+
+        for article in articles:
+            date = self._extract_date_from_published_at(article.published_at)
+
+            if date is None:
+                continue
+
+            count = self._count_word_in_title(article.title, search_term)
+
+            if date not in frequency_by_date:
+                frequency_by_date[date] = 0
+
+            frequency_by_date[date] += count
+
+        sorted_dates = sorted(frequency_by_date.keys())
+        counts = [frequency_by_date[d] for d in sorted_dates]
+
+        plt.figure()
+        plt.plot(sorted_dates, counts)
+
+        plt.xlabel("Date")
+        plt.ylabel("Frequency")
+        plt.title(f"Frequency of '{search_term}' in Article Titles")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
     def _extract_date_from_published_at(
             self, published_at: Optional[str]) -> Optional[datetime.date]:
@@ -73,8 +101,6 @@ class NewsProcessor:
             Optional[datetime.date]: Date object representing the date in YYYY-MM-DD format, or 
             None if input is None
         """
-        # This method is provided for your convenience.
-        # You can use it to convert published_at strings to date objects.
         if not published_at:
             return None
         return datetime.datetime.fromisoformat(published_at.replace('Z', '+00:00')).date()
@@ -90,5 +116,7 @@ class NewsProcessor:
         Returns:
             int: Number of occurrences (case-insensitive)
         """
-        # TODO: Count occurrences of search_term in title (case-insensitive)
-        pass
+        if not title:
+            return 0
+
+        return title.lower().count(search_term.lower())
