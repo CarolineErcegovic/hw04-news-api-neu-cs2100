@@ -57,7 +57,16 @@ class TestNewsProcessor(unittest.TestCase):
             self.articles,
             filter_func=lambda article: "Python" in article.title
         )
-        self.assertEqual(len(df), 2)
+
+        titles = list(df["title"])
+
+        self.assertEqual(
+            titles,
+            [
+                "Breaking News: Python is awesome",
+                "Python vs JavaScript: A Comparison"
+            ]
+        )
 
     def test_sort(self) -> None:
         """Test sorting functionality"""
@@ -67,7 +76,7 @@ class TestNewsProcessor(unittest.TestCase):
         )
 
         authors = list(df["author"])
-        self.assertEqual(authors, sorted(authors))
+        self.assertEqual(authors, ["Author A", "Author B", "Author C"])
     
     def test_sort_and_filter(self) -> None:
         """Test sorting and filtering together"""
@@ -77,7 +86,5 @@ class TestNewsProcessor(unittest.TestCase):
             filter_func=lambda article: "Python" in article.title
         )
 
-        self.assertEqual(len(df), 2)
-
         authors = list(df["author"])
-        self.assertEqual(authors, sorted(authors))
+        self.assertEqual(authors, ["Author A", "Author C"])
