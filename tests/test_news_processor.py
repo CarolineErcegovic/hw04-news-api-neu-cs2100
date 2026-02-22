@@ -16,7 +16,7 @@ class TestNewsProcessor(unittest.TestCase):
             Article(
                 url="http://example.com/1",
                 source="Example Source",
-                author="Author A",
+                author="ZZZ Author",  # changed
                 title="Breaking News: Python is awesome",
                 description="An article about Python.",
                 published_at="2023-10-01T10:00:00Z",
@@ -34,7 +34,7 @@ class TestNewsProcessor(unittest.TestCase):
             Article(
                 url="http://example.com/3",
                 source="Another Source",
-                author="Author C",
+                author="AAA Author",  # changed
                 title="Python vs JavaScript: A Comparison",
                 description="Comparing Python and JavaScript.",
                 published_at="2023-10-03T14:00:00Z",
@@ -76,7 +76,7 @@ class TestNewsProcessor(unittest.TestCase):
         )
 
         authors = list(df["author"])
-        self.assertEqual(authors, ["Author A", "Author B", "Author C"])
+        self.assertEqual(authors, ["AAA Author", "Author B", "ZZZ Author"])
     
     def test_sort_and_filter(self) -> None:
         """Test sorting and filtering together"""
@@ -87,4 +87,4 @@ class TestNewsProcessor(unittest.TestCase):
         )
 
         authors = list(df["author"])
-        self.assertEqual(authors, ["Author A", "Author C"])
+        self.assertEqual(authors, ["AAA Author", "ZZZ Author"])
