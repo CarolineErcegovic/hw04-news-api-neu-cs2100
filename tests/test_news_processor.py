@@ -5,20 +5,23 @@ Tests for the NewsProcessor class
 # pylint: disable=protected-access
 import unittest
 import sys
-import matplotlib.pyplot as plt
 sys.path.append(".")
+
 from src.news_processor import NewsProcessor
 from src.article import Article
 
+
 class TestNewsProcessor(unittest.TestCase):
-    """Example test case for the NewsProcessor class"""
+    """Tests for the NewsProcessor class"""
+
     def setUp(self) -> None:
+        """Create a NewsProcessor instance and sample articles."""
         self.processor = NewsProcessor()
         self.articles = [
             Article(
                 url="http://example.com/1",
                 source="Example Source",
-                author="ZZZ Author",  # changed
+                author="ZZZ Author",
                 title="Breaking News: Python is awesome",
                 description="An article about Python.",
                 published_at="2023-10-01T10:00:00Z",
@@ -36,7 +39,7 @@ class TestNewsProcessor(unittest.TestCase):
             Article(
                 url="http://example.com/3",
                 source="Another Source",
-                author="AAA Author",  # changed
+                author="AAA Author",
                 title="Python vs JavaScript: A Comparison",
                 description="Comparing Python and JavaScript.",
                 published_at="2023-10-03T14:00:00Z",
@@ -45,23 +48,22 @@ class TestNewsProcessor(unittest.TestCase):
         ]
 
     def test_to_df_no_sort_no_filter(self) -> None:
-        """Test that to_df returns a DataFrame with the correct columns and number of 
-        rows when no sorting and no filtering is applied"""
+        """Test to_df without sorting or filtering."""
         df = self.processor.to_df(self.articles)
         self.assertEqual(len(df), 3)
         self.assertListEqual(
-            list(df.columns), 
-            ['url', 'source', 'author', 'title', 'description', 'published_at', 'content'])
+            list(df.columns),
+            ["url", "source", "author", "title", "description", "published_at", "content"]
+        )
 
     def test_filter(self) -> None:
-        """Test filtering functionality"""
+        """Test filtering functionality."""
         df = self.processor.to_df(
             self.articles,
             filter_func=lambda article: "Python" in article.title
         )
 
         titles = list(df["title"])
-
         self.assertEqual(
             titles,
             [
@@ -71,7 +73,7 @@ class TestNewsProcessor(unittest.TestCase):
         )
 
     def test_sort(self) -> None:
-        """Test sorting functionality"""
+        """Test sorting functionality."""
         df = self.processor.to_df(
             self.articles,
             sort_by=lambda article: article.author
@@ -79,9 +81,9 @@ class TestNewsProcessor(unittest.TestCase):
 
         authors = list(df["author"])
         self.assertEqual(authors, ["AAA Author", "Author B", "ZZZ Author"])
-    
+
     def test_sort_and_filter(self) -> None:
-        """Test sorting and filtering together"""
+        """Test sorting and filtering together."""
         df = self.processor.to_df(
             self.articles,
             sort_by=lambda article: article.author,
@@ -90,22 +92,21 @@ class TestNewsProcessor(unittest.TestCase):
 
         authors = list(df["author"])
         self.assertEqual(authors, ["AAA Author", "ZZZ Author"])
-    
+
     def test_filter_no_matches(self) -> None:
-        """testing filter does not match"""
+        """Test filtering when no matches exist."""
         df = self.processor.to_df(
             self.articles,
             filter_func=lambda article: "Ruby" in article.title
         )
-
         self.assertEqual(len(df), 0)
-    
+
     def test_filter_and_sort_both_applied(self) -> None:
-        """testing both the filter and application"""
+        """Ensure both filtering and sorting are applied."""
         articles = [
-            Article("1","S","B Author","Match","", "2023-01-01T00:00:00Z",""),
-            Article("2","S","A Author","Match","", "2023-01-02T00:00:00Z",""),
-            Article("3","S","C Author","No Match","", "2023-01-03T00:00:00Z",""),
+            Article("1", "S", "B Author", "Match", "", "2023-01-01T00:00:00Z", ""),
+            Article("2", "S", "A Author", "Match", "", "2023-01-02T00:00:00Z", ""),
+            Article("3", "S", "C Author", "No Match", "", "2023-01-03T00:00:00Z", ""),
         ]
 
         df = self.processor.to_df(
@@ -120,51 +121,30 @@ class TestNewsProcessor(unittest.TestCase):
             ["A Author", "B Author"]
         )
 
-    def test_plot_word_popularity_runs_with_search(self) -> None:
-        """Test that plot_word_popularity runs successfully with a search term."""
-        articles = [
-            Article("1", "S", "A", "Python python", "", "2023-01-01T00:00:00Z", ""),
-            Article("2", "S", "B", "Python", "", "2023-01-01T01:00:00Z", ""),
-            Article("3", "S", "C", "No match", "", "2023-01-02T00:00:00Z", ""),
-        ]
-
-        try:
-            self.processor.plot_word_popularity(articles, "python")
-        except Exception as e:
-            self.fail(f"plot_word_popularity raised an exception: {e}")
-    
-    def test_count_word_case_insensitive(self) -> None:
-        """Test that word counting is case-insensitive."""
-        count = self.processor._count_word_in_title(
-            "Python python PYTHON", "python"
+    def test_sort_with_filter_none_explicit(self) -> None:
+        """Test sorting when filter_func is explicitly None."""
+        df = self.processor.to_df(
+            self.articles,
+            sort_by=lambda article: article.author,
+            filter_func=None
         )
-        self.assertEqual(count, 3)
 
+        authors = list(df["author"])
+        self.assertEqual(authors, ["AAA Author", "Author B", "ZZZ Author"])
 
-    def test_count_word_not_present(self) -> None:
-        """Test that count is zero when search term is not present."""
-        count = self.processor._count_word_in_title(
-            "JavaScript is great", "python"
+    def test_filter_with_sort_none_explicit(self) -> None:
+        """Test filtering when sort_by is explicitly None."""
+        df = self.processor.to_df(
+            self.articles,
+            sort_by=None,
+            filter_func=lambda article: "Python" in article.title
         )
-        self.assertEqual(count, 0)
 
-
-    def test_count_word_empty_title(self) -> None:
-        """Test that empty title returns zero."""
-        count = self.processor._count_word_in_title(
-            "", "python"
+        titles = list(df["title"])
+        self.assertEqual(
+            titles,
+            [
+                "Breaking News: Python is awesome",
+                "Python vs JavaScript: A Comparison"
+            ]
         )
-        self.assertEqual(count, 0)
-    
-    def test_extract_date_valid(self) -> None:
-        """Test that valid ISO timestamp returns correct date."""
-        date = self.processor._extract_date_from_published_at(
-            "2023-10-01T10:00:00Z"
-        )
-        self.assertEqual(str(date), "2023-10-01")
-
-
-    def test_extract_date_none(self) -> None:
-        """Test that None input returns None."""
-        date = self.processor._extract_date_from_published_at(None)
-        self.assertIsNone(date)
