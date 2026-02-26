@@ -131,3 +131,26 @@ class TestNewsProcessor(unittest.TestCase):
             self.processor.plot_word_popularity(articles, "python")
         except Exception as e:
             self.fail(f"plot_word_popularity raised an exception: {e}")
+    
+    def test_count_word_case_insensitive(self) -> None:
+        """Test that word counting is case-insensitive."""
+        count = self.processor._count_word_in_title(
+            "Python python PYTHON", "python"
+        )
+        self.assertEqual(count, 3)
+
+
+    def test_count_word_not_present(self) -> None:
+        """Test that count is zero when search term is not present."""
+        count = self.processor._count_word_in_title(
+            "JavaScript is great", "python"
+        )
+        self.assertEqual(count, 0)
+
+
+    def test_count_word_empty_title(self) -> None:
+        """Test that empty title returns zero."""
+        count = self.processor._count_word_in_title(
+            "", "python"
+        )
+        self.assertEqual(count, 0)
