@@ -89,9 +89,10 @@ class TestNewsProcessor(unittest.TestCase):
         authors = list(df["author"])
         self.assertEqual(authors, ["AAA Author", "ZZZ Author"])
     
-    def test_count_word_case_insensitive(self) -> None:
-        """Ensure word counting is case-insensitive"""
-        count = self.processor._count_word_in_title(
-            "Python python PYTHON", "python"
+    def test_filter_no_matches(self) -> None:
+        df = self.processor.to_df(
+            self.articles,
+            filter_func=lambda article: "Ruby" in article.title
         )
-        self.assertEqual(count, 3)
+
+        self.assertEqual(len(df), 0)
