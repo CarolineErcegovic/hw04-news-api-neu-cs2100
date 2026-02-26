@@ -90,9 +90,30 @@ class TestNewsProcessor(unittest.TestCase):
         self.assertEqual(authors, ["AAA Author", "ZZZ Author"])
     
     def test_filter_no_matches(self) -> None:
+        """testing filter does not match"""
         df = self.processor.to_df(
             self.articles,
             filter_func=lambda article: "Ruby" in article.title
         )
 
         self.assertEqual(len(df), 0)
+    
+    def test_filter_and_sort_both_applied(self) -> None:
+        """testing both the filter and application"""
+        articles = [
+            Article("1","S","B Author","Match","", "2023-01-01T00:00:00Z",""),
+            Article("2","S","A Author","Match","", "2023-01-02T00:00:00Z",""),
+            Article("3","S","C Author","No Match","", "2023-01-03T00:00:00Z",""),
+        ]
+
+        df = self.processor.to_df(
+            articles,
+            sort_by=lambda a: a.author,
+            filter_func=lambda a: a.title == "Match"
+        )
+
+        self.assertEqual(len(df), 2)
+        self.assertListEqual(
+            list(df["author"]),
+            ["A Author", "B Author"]
+        )
