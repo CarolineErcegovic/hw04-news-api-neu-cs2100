@@ -4,6 +4,7 @@ Tests for the NewsProcessor class
 
 import unittest
 import sys
+import matplotlib.pyplot as plt
 sys.path.append(".")
 from src.news_processor import NewsProcessor
 from src.article import Article
@@ -117,3 +118,16 @@ class TestNewsProcessor(unittest.TestCase):
             list(df["author"]),
             ["A Author", "B Author"]
         )
+
+    def test_plot_word_popularity_runs_with_search(self) -> None:
+        """Test that plot_word_popularity runs successfully with a search term."""
+        articles = [
+            Article("1", "S", "A", "Python python", "", "2023-01-01T00:00:00Z", ""),
+            Article("2", "S", "B", "Python", "", "2023-01-01T01:00:00Z", ""),
+            Article("3", "S", "C", "No match", "", "2023-01-02T00:00:00Z", ""),
+        ]
+
+        try:
+            self.processor.plot_word_popularity(articles, "python")
+        except Exception as e:
+            self.fail(f"plot_word_popularity raised an exception: {e}")
