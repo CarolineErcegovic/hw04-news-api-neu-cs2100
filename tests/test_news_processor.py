@@ -2,6 +2,7 @@
 Tests for the NewsProcessor class
 """
 
+# pylint: disable=protected-access
 import unittest
 import sys
 import matplotlib.pyplot as plt
@@ -154,3 +155,16 @@ class TestNewsProcessor(unittest.TestCase):
             "", "python"
         )
         self.assertEqual(count, 0)
+    
+    def test_extract_date_valid(self) -> None:
+        """Test that valid ISO timestamp returns correct date."""
+        date = self.processor._extract_date_from_published_at(
+            "2023-10-01T10:00:00Z"
+        )
+        self.assertEqual(str(date), "2023-10-01")
+
+
+    def test_extract_date_none(self) -> None:
+        """Test that None input returns None."""
+        date = self.processor._extract_date_from_published_at(None)
+        self.assertIsNone(date)
